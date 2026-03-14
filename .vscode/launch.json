@@ -3,7 +3,9 @@
         {
             "type": "swift",
             "request": "launch",
-            "args": [],
+            // TODO: why doesnt this work? prob need to open an issue on the swift extension
+            // "args": "${command:pickArgs}",
+            "args": ["install"],
             "cwd": "${workspaceFolder:projectx}",
             "name": "Debug projectx",
             "target": "projectx",

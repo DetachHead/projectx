@@ -7,13 +7,8 @@ struct GithubRepo {
     // TODO: dependency inject this
     let octokit: Octokit = Octokit()
 
-    func getLatestVersion() async -> String? {
-        do {
-            return try await octokit.getLatestRelease(owner: owner, repository: repo).tagName
-        } catch let e {
-            print("failed to get latest release: \(e)")
-        }
-        return nil
+    func getLatestVersion() async throws -> String {
+        try await octokit.getLatestRelease(owner: owner, repository: repo).tagName
     }
     // TODO: download release asset
 }

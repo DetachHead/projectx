@@ -1,9 +1,10 @@
-import Foundation
+import SystemPackage
 
-protocol Tool {
+protocol Tool: Sendable {
     var name: String { get }
-    func getLatestVersion() async -> String?
+    func getLatestVersion() async throws -> String
     /// automatically detect whether the current project uses this tool
-    func detect() -> Bool
-    func install(platform: Platform, path: URL) async
+    func isUsedInProject(projectDir: FilePath) -> Bool
+    // TODO: architecture
+    func install(version: String, installToPath: FilePath) async throws
 }
