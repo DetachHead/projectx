@@ -21,4 +21,8 @@
     "terminal.integrated.detectLocale": "off",
     "chat.disableAIFeatures": true,
     "explorer.compactFolders": false,
+    "editor.formatOnSave": true,
+    "[swift]": {
+        "editor.defaultFormatter": "vknabel.vscode-apple-swift-format"
+    },
 }
