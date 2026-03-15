@@ -1,0 +1,5 @@
+{
+    // im hoping all this does is turn off all the "lint only rules", because there's no IDE integration for them which makes them annoying.
+    // https://github.com/swiftlang/swift-format/issues/1168
+    "rules": {}
+}

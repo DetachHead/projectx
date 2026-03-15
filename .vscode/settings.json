@@ -25,4 +25,7 @@
     "[swift]": {
         "editor.defaultFormatter": "vknabel.vscode-apple-swift-format"
     },
+    "files.associations": {
+        ".swift-format": "jsonc"
+    },
 }
