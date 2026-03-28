@@ -41,13 +41,14 @@ extension FilePath {
   func makeExecutable() throws {
     #if os(Windows)
       return
+    #else
+      let attributes = try FileManager.default.attributesOfItem(atPath: self.string)
+      if let currentPermissions = attributes[.posixPermissions] as? NSNumber {
+        try FileManager.default.setAttributes(
+          [.posixPermissions: currentPermissions.uint16Value | 0o111],
+          ofItemAtPath: self.string)
+      }
     #endif
-    let attributes = try FileManager.default.attributesOfItem(atPath: self.string)
-    if let currentPermissions = attributes[.posixPermissions] as? NSNumber {
-      try FileManager.default.setAttributes(
-        [.posixPermissions: currentPermissions.uint16Value | 0o111],
-        ofItemAtPath: self.string)
-    }
   }
   func move(to destination: FilePath) throws {
     try FileManager.default.moveItem(atPath: self.string, toPath: destination.string)
