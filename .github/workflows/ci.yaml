@@ -24,7 +24,11 @@ jobs:
       - name: build
         run: |
           . "/Users/runner/.swiftly/env.sh"
-          swift build
+          swift build -c release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: macos
+          path: .build/release/projectx
   build-linux:
     runs-on: "ubuntu-latest"
     steps:
@@ -33,7 +37,12 @@ jobs:
         uses: vapor/swiftly-action@v0.2
         with:
           toolchain: ${{ env.swift_version }}
-      - run: swift build
+      - name: build
+        run: swift build -c release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: linux
+          path: .build/release/projectx
   build-windows:
     runs-on: "windows-latest"
     steps:
@@ -42,7 +51,12 @@ jobs:
         with:
           swift-version: swift-${{ env.swift_version }}-release
           swift-build: ${{ env.swift_version }}-RELEASE
-      - run: swift build
+      - name: build
+        run: swift build -c release
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows
+          path: .build/release/projectx.exe
   static_checks:
     runs-on: "ubuntu-latest"
     steps:
