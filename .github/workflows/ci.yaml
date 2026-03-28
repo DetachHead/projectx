@@ -38,8 +38,10 @@ jobs:
     runs-on: "windows-latest"
     steps:
       - uses: actions/checkout@v4
-      - name: "install swift"
-        run: "winget install --id Swift.Toolchain -e -v $env:swift_version"
+      - uses: compnerd/gha-setup-swift@v0.4.0
+        with:
+          swift-version: swift-${{ env.swift_version }}-release
+          swift-build: ${{ env.swift_version }}-RELEASE
       - run: swift build
   static_checks:
     runs-on: "ubuntu-latest"
