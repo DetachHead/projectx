@@ -1,5 +1,8 @@
 import Foundation
-import FoundationNetworking
+// https://github.com/tensorflow/swift/issues/486#issuecomment-646083111
+#if canImport(FoundationNetworking)
+  import FoundationNetworking
+#endif
 import SWCompression
 import SystemPackage
 
