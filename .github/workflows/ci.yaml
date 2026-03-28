@@ -38,7 +38,7 @@ jobs:
         with:
           toolchain: ${{ env.swift_version }}
       - name: build
-        run: swift build -c release
+        run: swift build -c release --static-swift-stdlib
       - uses: actions/upload-artifact@v7
         with:
           name: linux
