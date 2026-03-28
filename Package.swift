@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "projectx",
-  platforms: [.macOS(.v10_15)],
+  platforms: [.macOS(.v13)],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0"),
     .package(url: "https://github.com/nerdishbynature/octokit.swift", from: "0.11.0"),
