@@ -53,10 +53,22 @@ jobs:
           swift-build: ${{ env.swift_version }}-RELEASE
       - name: build
         run: swift build -c release
+      - name: Collect Swift DLLs
+        shell: pwsh
+        run: |
+          mkdir dist
+          copy .build\release\projectx.exe dist\
+
+          $swiftPath = (Get-Command swift).Source
+          $binDir = Split-Path $swiftPath
+
+          echo "Swift bin dir: $binDir"
+
+          copy "$binDir\*.dll" dist\
       - uses: actions/upload-artifact@v7
         with:
           name: windows
-          path: .build/release/projectx.exe
+          path: dist
   static_checks:
     runs-on: "ubuntu-latest"
     steps:
