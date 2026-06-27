@@ -1,0 +1,90 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    tags:
+      - '*'
+
+env:
+  # ideally this shouldn't be needed because we have a .swift-version file.
+  # see https://github.com/swiftlang/swiftly/issues/517
+  swift_version: "6.2.4"
+
+jobs:
+  # unfortunately we need different installation methods for each OS. see:
+  # macos: https://github.com/vapor/swiftly-action/pull/8
+  # windows: https://github.com/swiftlang/swiftly/issues/151
+  build-macos:
+    runs-on: "macos-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "install swiftly"
+        run: |
+          brew install swiftly
+          swiftly init --skip-install
+          swiftly install $swift_version
+          swiftly use $swift_version
+      - name: build
+        run: |
+          . "/Users/runner/.swiftly/env.sh"
+          swift build -c release
+          mv .build/release/projectx projectx-macos
+      - uses: actions/upload-artifact@v7
+        with:
+          name: macos
+          path: projectx-macos
+  build-linux:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "install swiftly"
+        uses: vapor/swiftly-action@v0.2
+        with:
+          toolchain: ${{ env.swift_version }}
+      - name: build
+        run: |
+          swift build -c release --static-swift-stdlib
+          mv .build/release/projectx projectx-linux
+      - uses: actions/upload-artifact@v7
+        with:
+          name: linux
+          path: projectx-linux
+  build-windows:
+    runs-on: "windows-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: compnerd/gha-setup-swift@v0.4.0
+        with:
+          swift-version: swift-${{ env.swift_version }}-release
+          swift-build: ${{ env.swift_version }}-RELEASE
+      - name: build
+        run: swift build -c release
+      - name: Collect Swift DLLs
+        shell: pwsh
+        run: |
+          copy "$env:localappdata\programs\swift\runtimes\$env:swift_version\usr\bin\*.dll" .build\release
+          compress-archive -path .build\release projectx-windows
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows
+          path: projectx-windows
+
+  release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs:
+      - build-windows
+      - build-linux
+      - build-macos
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+    - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+    - uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd
+      with:
+        artifacts: "windows/*,macos/*,linux/*"
+        prerelease: true
+        draft: true
+        generateReleaseNotes: true
